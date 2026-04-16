@@ -98,23 +98,41 @@ impl Value {
 					path,
 					value,
 				} => {
-					let path = path.into_iter().map(Part::Field).collect::<Vec<_>>();
-					if let Value::String(p) = value
-						&& let Value::String(v) = this.pick(&path)
-					{
-						let dmp = dmp::new();
-						let pch = dmp.patch_from_text(p).map_err(|e| {
-							Error::InvalidPatch(PatchError {
-								message: format!("{e:?}"),
-							})
-						})?;
-						let (txt, _) = dmp.patch_apply(&pch, v.as_str()).map_err(|e| {
-							Error::InvalidPatch(PatchError {
-								message: format!("{e:?}"),
-							})
-						})?;
-						let txt = txt.into_iter().collect::<String>();
-						this.put(&path, Value::from(txt));
+					// "/" parses to [""] — one empty string segment meaning root
+					let is_root = path.is_empty() || (path.len() == 1 && path[0].is_empty());
+					let path = path
+						.into_iter()
+						.filter(|p| !p.is_empty()) // strip the empty root segment
+						.map(Part::Field)
+						.collect::<Vec<_>>();
+
+					if let Value::String(p) = value {
+						let current = if is_root {
+							this.clone()
+						} else {
+							this.pick(&path)
+						};
+
+						if let Value::String(v) = current {
+							let dmp = dmp::new();
+							let pch = dmp.patch_from_text(p).map_err(|e| {
+								Error::InvalidPatch(PatchError {
+									message: format!("{e:?}"),
+								})
+							})?;
+							let (txt, _) = dmp.patch_apply(&pch, v.as_str()).map_err(|e| {
+								Error::InvalidPatch(PatchError {
+									message: format!("{e:?}"),
+								})
+							})?;
+							let txt = txt.into_iter().collect::<String>();
+
+							if is_root {
+								this = Value::from(txt);
+							} else {
+								this.put(&path, Value::from(txt));
+							}
+						}
 					}
 				}
 				// Copy a value from one field to another

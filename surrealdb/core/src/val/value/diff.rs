@@ -6,6 +6,11 @@ impl Value {
 		let mut res = Vec::new();
 		let mut path = Vec::new();
 
+		match (self, val) {
+			(Value::Object(_), _) | (Value::Array(_), _) => {}
+			_ => path.push(String::new()),
+		}
+
 		self.diff_rec(val, &mut path, &mut res);
 
 		res
