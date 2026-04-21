@@ -128,7 +128,7 @@ impl Operation {
 			} => {
 				map! {
 					// safety: does not contain null bytes.
-					"op".to_owned() => Value::String("map".to_owned()),
+					"op".to_owned() => Value::String("move".to_owned()),
 					"path".to_owned() => path_to_strand(&path),
 					"from".to_owned() => path_to_strand(&from),
 				}
