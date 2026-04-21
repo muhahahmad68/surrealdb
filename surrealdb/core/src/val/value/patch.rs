@@ -105,7 +105,8 @@ impl Value {
 				} => {
 					// "/" parses to [""] — one empty string segment meaning root
 					let is_root = path.is_empty() || (path.len() == 1 && path[0].is_empty());
-					// Only root skips segments; preserve empty-string keys elsewhere (do not filter).
+					// Only root skips segments; preserve empty-string keys elsewhere (do not
+					// filter).
 					let path: Vec<Part> = if is_root {
 						vec![]
 					} else {
