@@ -366,6 +366,14 @@ mod tests {
 	}
 
 	#[tokio::test]
+	async fn patch_replace_root_scalar_path_empty_string() {
+		let mut val = parse_val!("42");
+		let ops = parse_val!("[{ op: 'replace', path: '', value: 99 }]");
+		val.patch(ops).unwrap();
+		assert_eq!(parse_val!("99"), val);
+	}
+
+	#[tokio::test]
 	async fn patch_replace_root_round_trip_diff() {
 		let old = parse_val!("42");
 		let now = parse_val!("99");

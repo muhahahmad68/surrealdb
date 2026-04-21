@@ -1,7 +1,7 @@
 /**
 [test]
 issue = 7239
-reason = "Root-level scalars: value::patch($start, value::diff($start, $after)) must yield $after (Change for strings, Replace for other scalars and type changes). Covers ambiguous JSON Pointer / vs empty-string object keys."
+reason = "Root-level scalars: value::patch($start, value::diff($start, $after)) must yield $after (Change for strings, Replace for other scalars and type changes). Covers RFC 6901 path '' vs '/', scalar root diff using path [], and objects with an empty-string key."
 
 [[test.results]]
 value = "NONE"
